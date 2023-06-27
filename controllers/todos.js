@@ -1,4 +1,5 @@
 const { response } = require('express');
+const Todo = require('../models/todo');
 
 const getTodos = (req, res = response) => {
     res.json({
@@ -6,10 +7,15 @@ const getTodos = (req, res = response) => {
     })
 }
 
-const createTodo = (req, res = response) => {
-    console.log(req.body);
+const createTodo = async(req, res = response) => {
+    const body = req.body
+    const todo = new Todo( body );
+
+    await todo.save();
+    
     res.json({
-        msg: 'post - controller'
+        msg: 'post - controller',
+        todo
     })
 }
 
