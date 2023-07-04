@@ -8,6 +8,7 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
         this.todosPath = '/api/todos';
+        this.authPath = '/api/auth';
 
         // Database connection
         this.connectDatabase();
@@ -34,6 +35,7 @@ class Server {
 
     routes() {
         this.app.use( this.todosPath, require('../routes/todos') );
+        this.app.use( this.authPath, require('../routes/auth') );
     }
 
     startServer() {

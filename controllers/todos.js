@@ -1,37 +1,87 @@
 const { response } = require('express');
 const Todo = require('../models/todo');
 
-const getTodos = (req, res = response) => {
-    res.json({
-        msg: 'get - controller'
-    })
-}
+const getTodos = async(req, res = response) => {
 
-const createTodo = async(req, res = response) => {
-    const body = req.body
-    const todo = new Todo( body );
-
-    await todo.save();
+    try {
+        const { limit, from = 0 } = req.query;
+        const query = { active: true };
     
-    res.json({
-        msg: 'post - controller',
-        todo
-    })
+        const [ total, todos ] = await Promise.all([
+            Todo.countDocuments(query),
+            Todo.find(query)
+                .skip(Number(from))
+                .limit(Number(limit))
+        ])
+    
+        res.json({
+            total,
+            todos
+        })       
+    } catch (error) {
+        res.status(500).json({
+            msg: error
+        })
+    }
+
 }
 
-const updateTodo = (req, res = response) => {
-    const { id } = req.params;
+const createTodo = async(req, res = response) => {    
+    try {
+        const { title, ...rest } = req.body;
+        const todoDB = await Todo.findOne({ title });
 
-    res.json({
-        msg: 'update - controller',
-        id
-    })
+        if ( todoDB ) {
+            return res.status(400).json({
+                msg: `The task ${title} already exists`
+            })
+        }
+
+        console.log(rest);
+        const todo = new Todo( req.body );
+    
+        await todo.save();
+        
+        res.json({
+            msg: 'post - controller',
+            todo
+        })        
+    } catch (error) {
+        res.status(500).json({
+            msg: error
+        })
+    }
 }
 
-const deleteTodo = (req, res = response) => {
-    res.json({
-        msg: 'delete - controller'
-    })
+const updateTodo = async(req, res = response) => {    
+    try {
+        const { id } = req.params;
+        const { userId, _id, ...rest } = req.body;
+        await Todo.findByIdAndUpdate( id, rest );
+    
+        res.json({
+            id
+        })        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: error
+        })
+    }
+}
+
+const deleteTodo = async(req, res = response) => {
+    try {
+        const { id } = req.params;
+        await Todo.findByIdAndUpdate( id, { active: false });
+        res.json({
+            id
+        })        
+    } catch (error) {
+        res.status(500).json({
+            msg: error
+        })
+    }
 }
 
 
