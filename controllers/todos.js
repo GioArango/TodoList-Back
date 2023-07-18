@@ -28,6 +28,7 @@ const getTodos = async(req, res = response) => {
 
 const createTodo = async(req, res = response) => {    
     try {
+        console.log('REQ CREATE', req);
         const { title, ...rest } = req.body;
         const todoDB = await Todo.findOne({ title });
 
@@ -37,7 +38,7 @@ const createTodo = async(req, res = response) => {
             })
         }
 
-        console.log(rest);
+        console.log('REQUEST', rest);
         const todo = new Todo( req.body );
     
         await todo.save();

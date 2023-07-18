@@ -21,6 +21,7 @@ const existsTodoById = async( id = '' ) => {
 
 const existsUserById = async( id = '' ) => {
     try {
+        console.log('UID:', id);
         const existsUser = await Todos.findOne({ 'userId': id });
         if( !existsUser ) {
             throw new Error('User is not valid')
