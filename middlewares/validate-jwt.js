@@ -9,7 +9,7 @@ const validateJWT = async( req, res = response, next) => {
     console.log('TOKEN:', token);
 
     if (!token) {
-        res.status(400).json({
+        return res.status(400).json({
             ok: false,
             msg: "The token is required"
         })
@@ -22,9 +22,9 @@ const validateJWT = async( req, res = response, next) => {
         
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
-            msg: "Internal Server Error"
+            msg: `Internal Server Error - ${error}`
         })
     }
 

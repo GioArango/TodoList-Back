@@ -5,10 +5,12 @@ const getTodos = async(req, res = response) => {
 
     try {
         const { limit, from = 0 } = req.query;
-        const query = { active: true };
+        const { userId } = req.body;
+        const query = { active: true, userId };
     
         const [ total, todos ] = await Promise.all([
             Todo.countDocuments(query),
+            Todo.find({ userId }),
             Todo.find(query)
                 .skip(Number(from))
                 .limit(Number(limit))
@@ -44,8 +46,8 @@ const createTodo = async(req, res = response) => {
         await todo.save();
         
         res.json({
-            msg: 'post - controller',
-            todo
+            msg: 'successfully created task',
+            id: todo._id
         })        
     } catch (error) {
         res.status(500).json({
@@ -61,11 +63,12 @@ const updateTodo = async(req, res = response) => {
         await Todo.findByIdAndUpdate( id, rest );
     
         res.json({
+            msg: 'successfully updated task',
             id
         })        
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             msg: error
         })
     }
@@ -76,10 +79,11 @@ const deleteTodo = async(req, res = response) => {
         const { id } = req.params;
         await Todo.findByIdAndUpdate( id, { active: false });
         res.json({
+            msg: 'successfully deleted task',
             id
         })        
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             msg: error
         })
     }

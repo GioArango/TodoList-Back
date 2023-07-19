@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../db/config');
 const admin = require('firebase-admin');
+const firebaseAdminConfig = require('../config/firebase');
 
 class Server {
 
@@ -29,11 +30,8 @@ class Server {
     }
 
     initializeFirebase() {
-        // Configuración de Firebase Admin utilizando las credenciales de servicio
-        const serviceAccount = require('../serviceAccountKey.json');
-
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
+            credential: admin.credential.cert(firebaseAdminConfig)
         });
 
         console.log('Firebase inizializated');
