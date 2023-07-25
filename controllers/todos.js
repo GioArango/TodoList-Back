@@ -4,16 +4,15 @@ const Todo = require('../models/todo');
 const getTodos = async(req, res = response) => {
 
     try {
-        const { limit, from = 0 } = req.query;
+        const { limit, from = 0, status } = req.query;
         const { userId } = req.body;
-        const query = { active: true, userId };
+        const query = { active: true, status, userId };
     
         const [ total, todos ] = await Promise.all([
             Todo.countDocuments(query),
-            Todo.find({ userId }),
             Todo.find(query)
                 .skip(Number(from))
-                .limit(Number(limit))
+                .limit(Number(limit)),
         ])
     
         res.json({
@@ -30,7 +29,7 @@ const getTodos = async(req, res = response) => {
 
 const createTodo = async(req, res = response) => {    
     try {
-        console.log('REQ CREATE', req);
+        console.log('REQ CREATE------', req);
         const { title, ...rest } = req.body;
         const todoDB = await Todo.findOne({ title });
 

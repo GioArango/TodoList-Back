@@ -28,6 +28,7 @@ const TodoSchema = Schema({
     },
     status: {
         type: String,
+        default: 'TODO',
         required: [true, 'The status is required'],
         // enum: ['TODO', 'INPROGRESS', 'DONE']
     },
