@@ -5,7 +5,7 @@ const TodoSchema = Schema({
     title: {
         type: String,
         required: [true, 'The title is required'],
-        unique: true
+        // unique: true
     },
     description: {
         type: String

@@ -29,14 +29,16 @@ const getTodos = async(req, res = response) => {
 
 const createTodo = async(req, res = response) => {    
     try {
-        console.log('REQ CREATE------', req);
         const { title, ...rest } = req.body;
-        const todoDB = await Todo.findOne({ title });
+        const existingTodo = await Todo.find({ title });
 
-        if ( todoDB ) {
-            return res.status(400).json({
-                msg: `The task ${title} already exists`
-            })
+        if ( existingTodo ) {
+            const isActiveTask = existingTodo.some((todo) => todo.active);
+            if (isActiveTask) {
+                return res.status(400).json({
+                    msg: `The task ${title} already exists`
+                })
+            }
         }
 
         console.log('REQUEST', rest);
@@ -49,6 +51,7 @@ const createTodo = async(req, res = response) => {
             id: todo._id
         })        
     } catch (error) {
+        console.log('ERROR', error);
         res.status(500).json({
             msg: error
         })
